@@ -1,23 +1,40 @@
 const HOME = "/";
-const JOIN = "/join";
-const LOGIN = "/login";
-const LOGOUT = "/logout";
 
-
-//Users
+// Users
 const USERS = "/users";
 const USER_DETAIL = "/:id";
-const EDIT_PROFILE = "/edit-profile";
+const USER_PROMISES = "/:id/promises";
+const LOGOUT_SESSIONS = "/:id/logout-sessions";
+
+// Promises
+const PROMISES = "/promises";
+const PROMISE_DETAIL = "/:id";
+
+// Calendar
+const CALENDAR = "/calendar";
+
 
 const routes = {
     home: HOME,
-    join: JOIN,
-    login: LOGIN,
-    logout: LOGOUT,
     users: USERS,
-    userDetail: USER_DETAIL,
-    editProfile: EDIT_PROFILE
-
+    userDetail: id => {
+        if(id){
+            return `/users/${id}`;
+        } else {
+            return USER_DETAIL;
+        }
+    },
+    userPromises: USER_PROMISES,
+    logoutSessions: LOGOUT_SESSIONS,
+    promises: PROMISES,
+    promiseDetail: id => {
+        if (id) {
+            return `/promises/${id}`;
+        } else {
+            return PROMISE_DETAIL;
+        }
+    },
+    calendar: CALENDAR
 }
 
 export default routes;

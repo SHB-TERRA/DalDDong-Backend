@@ -3,9 +3,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import calendarRouter from "./routers/calendarRouter";
+import promiseRouter from "./routers/promiseRouter";
 import userRouter from "./routers/userRouter";
 import globalRouter from "./routers/globalRouter";
 import { localsMiddleware } from "./middlewares";
+import routes from "./routes";
 
 const app = express();
 
@@ -18,6 +21,9 @@ app.use(bodyParser.urlencoded({
 app.use(morgan("dev"));
 app.use(localsMiddleware);
 
-app.use("/", globalRouter);
-app.use("/user", userRouter);
+app.use(routes.home, globalRouter);
+app.use(routes.users, userRouter);
+app.use(routes.promises, promiseRouter); 
+app.use(routes.calendar, calendarRouter);
+
 export default app;
