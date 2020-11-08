@@ -1,4 +1,4 @@
-const getConnection = require('../db.js');
+// const getConnection = require('../db.js');
 const { User, Sequelize: { Op } } = require('../models');
 
 export const home = async (req, res) => {

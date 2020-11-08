@@ -36,5 +36,19 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.User = require('./user')(sequelize, Sequelize);
+db.Promise = require('./promise')(sequelize, Sequelize);
+db.Participant = require('./participant')(sequelize, Sequelize);
+
+/* user -> promise: 1 -> N */
+db.User.hasMany(db.Promise, { foreignKey: 'user_id', sourceKey: 'user_id'});
+db.Promise.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'user_id'});
+
+/* promise -> participant: 1 -> N */
+db.Promise.hasMany(db.Participant, { foreignKey: 'promise_id', sourceKey: 'id'});
+db.Participant.belongsTo(db.Promise, { foreignKey: 'promise_id', targetKey: 'id'});
+
+/* user -> participant: 1 -> N */
+db.User.hasMany(db.Participant, { foreignKey: 'user_id', sourceKey: 'user_id'});
+db.Participant.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'user_id'});
 
 module.exports = db;
