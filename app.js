@@ -10,7 +10,9 @@ import globalRouter from "./routers/globalRouter";
 import { localsMiddleware } from "./middlewares";
 import routes from "./routes";
 
+var sequelize = require('./models').sequelize;
 const app = express();
+sequelize.sync();
 
 app.use(helmet());
 app.use(cookieParser());
