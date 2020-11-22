@@ -5,6 +5,7 @@ const USERS = "/users";
 const USER_DETAIL = "/:id";
 const USER_PROMISES = "/:id/promises";
 const LOGOUT_SESSIONS = "/:id/logout-sessions";
+const AUTH = "/auth";
 
 // Promises
 const PROMISES = "/promises";
@@ -12,7 +13,6 @@ const PROMISE_DETAIL = "/:id";
 
 // Calendar
 const CALENDAR = "/calendar";
-
 
 const routes = {
     home: HOME,
@@ -34,7 +34,8 @@ const routes = {
             return PROMISE_DETAIL;
         }
     },
-    calendar: CALENDAR
+    calendar: CALENDAR,
+    auth: AUTH
 }
 
 export default routes;

@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             name:{
                 type: DataTypes.STRING(20),
-                alllowNull: false,
+                alllowNull: true,
                 unique: false
             },
             email:{
@@ -14,12 +14,21 @@ module.exports = (sequelize, DataTypes) => {
             },
             user_id:{
                 type:DataTypes.STRING(20),
-                allowNull:false,
+                allowNull:true,
                 unique:true
             },
             password:{
-                type:DataTypes.STRING(60),
+                type:DataTypes.STRING(2048),
                 allowNull:false
+            },
+            email_verified: {
+                type:DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+            key_for_verify :{
+                 type: DataTypes.STRING(150), 
+                 required:true 
             }
         },
         {

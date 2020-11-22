@@ -38,6 +38,7 @@ db.Sequelize = Sequelize;
 db.User = require('./user')(sequelize, Sequelize);
 db.Promise = require('./promise')(sequelize, Sequelize);
 db.Participant = require('./participant')(sequelize, Sequelize);
+db.Session = require('./session')(sequelize, Sequelize);
 
 /* user -> promise: 1 -> N */
 db.User.hasMany(db.Promise, { foreignKey: 'user_id', sourceKey: 'user_id'});
