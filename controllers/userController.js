@@ -92,7 +92,7 @@ export const authEmail = async(req, res, next) => {
                     email: req.body.email,
                     password: crypto.createHash('sha512').update(req.body.password).digest('base64')
                 }
-              })
+              });
         }else{
             return res.status(500).json({message: "인증번호가 일치하지 않습니다"});
         }
@@ -128,7 +128,7 @@ export const LoginCallback = async( email, password, done ) => {
 }
 
 export const login = async (req, res, next) => {
-    
+
     passport.authenticate('local', (err, user, info) => {
         
         if (err) {
@@ -145,12 +145,13 @@ export const login = async (req, res, next) => {
             if (err) return next(err);
             return res.status(200).json(user);
         });
+
     })(req, res, next);
 }
 
 export const logout = (req, res) => {
     req.logout();
-    return res.json('로그아웃');
+    return res.json({'message':'logout success'});
 }
 
 export const getUserProfile = (req, res) => {
@@ -158,7 +159,72 @@ export const getUserProfile = (req, res) => {
     return res.json(info);
 }
 
-export const editUser = (req, res) => res.send("editUser");
+export const editUser = async (req, res) => {
+    let user = '';
+    try {
+        user = await User.findOne({ 
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!user) return res.status(403).json({message: '일치하는 유저 정보가 없습니다.'});
 
-export const deleteUser = (req, res) => res.send("deleteUser");
+        // if ( req.body.nickname ) {
+        //     await User.update({ 
+        //         nickname: req.body.nickname,
+        //     }, {
+        //         where: {
+        //             id: req.params.id
+        //         }
+        //     });
+        //     user.nickname = req.body.nickname;
+        // }
+        // if ( req.body.password ) {
+        //     await User.update({ 
+        //         password: crypto.createHash('sha512').update(req.body.password).digest('base64'),
+        //     }, {
+        //         where: {
+        //             id: req.params.id
+        //         }
+        //     });
+        //     user.password = crypto.createHash('sha512').update(req.body.password).digest('base64');
+        // }
+        if ( !req.body.nickname || req.body.nickname.length == 0) req.body.nickname = user.nickname;
+        if ( !req.body.password || req.body.password.length == 0) req.body.password = user.password;
+        await User.update({ 
+            nickname: req.body.nickname,
+            password: crypto.createHash('sha512').update(req.body.password).digest('base64'),
+        }, {
+            where: {
+                id: req.params.id
+            }
+        });
+        
+    } catch (error){
+        console.log(error)
+        return res.status(500).send(error);
+    }
+    return res.status(200).json(user);
+}
+
+export const deleteUser = async (req, res) => {
+    let user = '';
+    try {
+        user = await User.findOne({ 
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!user) return res.status(403).json({message: '일치하는 유저 정보가 없습니다.'});
+
+        user = await User.delete({
+            where: {
+                id: req.params.id
+            }
+          });
+
+    } catch (error){
+        return res.status(500).send(error);
+    }
+}
 

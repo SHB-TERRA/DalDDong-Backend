@@ -7,7 +7,7 @@ import calendarRouter from "./routers/calendarRouter";
 import promiseRouter from "./routers/promiseRouter";
 import userRouter from "./routers/userRouter";
 import globalRouter from "./routers/globalRouter";
-import { localsMiddleware } from "./middlewares";
+import { localsMiddleware, isLogin, isLogOut } from "./middlewares";
 import routes from "./routes";
 import session from "express-session";
 import passport from "passport";
@@ -46,6 +46,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(localsMiddleware);
+// app.use(isLogin);
+// app.use(isLogOut);
 
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
