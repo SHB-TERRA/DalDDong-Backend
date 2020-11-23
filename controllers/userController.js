@@ -169,26 +169,6 @@ export const editUser = async (req, res) => {
         });
         if (!user) return res.status(403).json({message: '일치하는 유저 정보가 없습니다.'});
 
-        // if ( req.body.nickname ) {
-        //     await User.update({ 
-        //         nickname: req.body.nickname,
-        //     }, {
-        //         where: {
-        //             id: req.params.id
-        //         }
-        //     });
-        //     user.nickname = req.body.nickname;
-        // }
-        // if ( req.body.password ) {
-        //     await User.update({ 
-        //         password: crypto.createHash('sha512').update(req.body.password).digest('base64'),
-        //     }, {
-        //         where: {
-        //             id: req.params.id
-        //         }
-        //     });
-        //     user.password = crypto.createHash('sha512').update(req.body.password).digest('base64');
-        // }
         if ( !req.body.nickname || req.body.nickname.length == 0) req.body.nickname = user.nickname;
         if ( !req.body.password || req.body.password.length == 0) req.body.password = user.password;
         await User.update({ 
