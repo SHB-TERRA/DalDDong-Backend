@@ -4,7 +4,9 @@ const HOME = "/";
 const USERS = "/users";
 const USER_DETAIL = "/:id";
 const USER_PROMISES = "/:id/promises";
-const LOGOUT_SESSIONS = "/:id/logout-sessions";
+const AUTH = "/auth";
+const LOGIN="/login";
+const LOGOUT="/logout";
 
 // Promises
 const PROMISES = "/promises";
@@ -13,10 +15,11 @@ const PROMISE_DETAIL = "/:id";
 // Calendar
 const CALENDAR = "/calendar";
 
-
 const routes = {
     home: HOME,
     users: USERS,
+    login: LOGIN,
+    logout: LOGOUT,
     userDetail: id => {
         if(id){
             return `/users/${id}`;
@@ -25,7 +28,6 @@ const routes = {
         }
     },
     userPromises: USER_PROMISES,
-    logoutSessions: LOGOUT_SESSIONS,
     promises: PROMISES,
     promiseDetail: id => {
         if (id) {
@@ -34,7 +36,8 @@ const routes = {
             return PROMISE_DETAIL;
         }
     },
-    calendar: CALENDAR
+    calendar: CALENDAR,
+    auth: AUTH
 }
 
 export default routes;
