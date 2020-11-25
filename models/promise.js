@@ -9,14 +9,17 @@ module.exports = (sequelize, DataTypes) => {
             },
             user_id:{
                 type:DataTypes.STRING(20),
-                allowNull:false,
-                unique: true
+                allowNull:false
             },
-            date:{
+            promise_time:{
                 type:DataTypes.DATE,
                 allowNull:false
             },
             place:{
+                type:DataTypes.STRING(60),
+                allowNull:false
+            },
+            meeting_place:{
                 type:DataTypes.STRING(60),
                 allowNull:false
             },

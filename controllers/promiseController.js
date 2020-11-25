@@ -1,5 +1,7 @@
 //import { getPromiseLists, makePromise, deletePromise, getPromiseDetail, joinPromise } from "../controllers/promiseController";
-const { Promise, Sequelize: { Op } } = require('../models');
+import moment from 'moment';
+
+const { Promise, Sequelize: { Op }, Participant } = require('../models');
 
 export const getPromiseLists = async (req, res) => {
     let result = '';
@@ -12,19 +14,123 @@ export const getPromiseLists = async (req, res) => {
     return res.status(200).json(result);
 }
 
-export const makePromise = (req, res) => {
-    res.send("makePromise");
+export const makePromise = async (req, res) => {
+    let newPromise = '';
+    let parsedTime  = '';
+    let newPariticipant = '';
+    try {
+        parsedTime = moment(req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
+        
+        newPromise = await Promise.create({
+            meeting_place: req.body.meeting_place,
+            place: req.body.place,
+            max_people: req.body.max_people,
+            promise_time: parsedTime,
+            name: req.body.title,
+            user_id: req.body.user_id
+            // user_id: req.user.user_id TODO user_id 필수 구현 후 이 코드로 변경
+        });
+
+        newPariticipant = await Participant.create({
+            promise_id: newPromise.id,
+            user_id: newPromise.user_id
+        });
+
+    } catch ( error ) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+    return res.status(200).json(newPromise);
 }
 
-export const deletePromise = (req, res) => {
-    res.send("deletePromise");
+export const deletePromise = async (req, res) => {
+
+    let newPromise = '';
+    let newPariticipant = '';
+
+    try {
+        newPromise = await Promise.destroy({
+            where: {
+                id: req.params.id,
+                user_id: req.user.user_id
+            }
+        });
+
+        if (!newPromise) {
+            return res.status(500).json({message: '등록한 사람만 삭제가 가능합니다'});
+        }
+
+
+        newPariticipant = await Participant.destroy({
+            where: {
+                promise_id: req.params.id
+            }
+        });
+
+    } catch ( error ) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+    return res.status(200).json({message: "success"});
 }
 
-export const getPromiseDetail = (req, res) => {
-    res.send("getPromiseDetail");
+export const getPromiseDetail = async (req, res) => {
+
+    let newPromise = '';
+
+    try {
+        newPromise = await Promise.findAll({
+            where: {
+                id: req.body.promise_id
+            }
+        });
+    } catch ( error ) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+
+    return res.status(200).json(newPromise);
+
 }
 
-export const joinPromise = (req, res) => {
-    res.send("joinPromise");
+export const joinPromise = async (req, res) => {
+    let promise = '';    
+    let result = '';
+    let newPariticipant = '';
+
+    try {
+        promise = await Promise.findAll({
+            id: req.params.id
+        });
+        console.log("1");
+        var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
+
+        //지난 약속에 대해서 계산하도록
+        if ( moment.utc(moment(promise.promise_time,"DD/MM/YYYY HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm") < 30 ){
+            console.log(moment.utc(moment(now, "YYYY-MM-D HH:mm:ss").diff(moment(promise.promise_time,"DD/MM/YYYY HH:mm:ss"))).format("mm"));
+            return res.status(403).send({message: '이미 기간이 만료된 약속입니다.'})
+        }
+        console.log("2");
+        result = await Participant.findAndCountAll({
+            where: {
+                id: req.params.id
+            }
+        });
+        console.log("3");
+        if ( (promise.maxPeople <= result.count)){
+            return res.status(403).send({message: '이미 완료된 약속입니다.'})
+        }
+        console.log(req.user);
+        newPariticipant = await Participant.create({
+            promise_id: promise.id,
+            user_id: req.user.user_id
+        });
+        console.log("5");
+    } catch ( error ) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+
+    return res.status(200).json(newPariticipant);
 }
 
