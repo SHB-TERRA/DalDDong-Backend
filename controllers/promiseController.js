@@ -6,7 +6,11 @@ const { Promise, Sequelize: { Op }, Participant } = require('../models');
 export const getPromiseLists = async (req, res) => {
     let result = '';
     try{
-        result = await Promise.findAndCountAll();
+        result = await Promise.findAndCountAll({
+            where:{
+                is_board: true
+            }
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).send(error);
@@ -27,7 +31,8 @@ export const makePromise = async (req, res) => {
             max_people: req.body.max_people,
             promise_time: parsedTime,
             name: req.body.title,
-            user_id: req.body.user_id
+            user_id: req.body.user_id,
+            is_board: true
             // user_id: req.user.user_id TODO user_id 필수 구현 후 이 코드로 변경
         });
 
@@ -104,7 +109,7 @@ export const joinPromise = async (req, res) => {
         var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
 
         var LIMIT_TIME = 30;
-        var DIFF_TIME = moment.utc(moment(promise.promise_time,"DD/MM/YYYY HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
+        var DIFF_TIME = moment.utc(moment(promise.promise_time,"YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
         
         if ( DIFF_TIME < LIMIT_TIME ){
             return res.status(403).send({message: '이미 기간이 만료된 약속입니다.'})

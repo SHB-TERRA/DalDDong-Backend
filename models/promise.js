@@ -26,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
             max_people:{
                 type:DataTypes.INTEGER,
                 allowNull:false
+            },
+            is_board:{
+                type:DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         },
         {
