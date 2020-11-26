@@ -60,7 +60,6 @@ export const deletePromise = async (req, res) => {
             return res.status(500).json({message: '등록한 사람만 삭제가 가능합니다'});
         }
 
-
         newPariticipant = await Participant.destroy({
             where: {
                 promise_id: req.params.id
@@ -77,7 +76,6 @@ export const deletePromise = async (req, res) => {
 export const getPromiseDetail = async (req, res) => {
 
     let newPromise = '';
-
     try {
         newPromise = await Promise.findAll({
             where: {
@@ -102,30 +100,31 @@ export const joinPromise = async (req, res) => {
         promise = await Promise.findAll({
             id: req.params.id
         });
-        console.log("1");
+        
         var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
 
-        //지난 약속에 대해서 계산하도록
-        if ( moment.utc(moment(promise.promise_time,"DD/MM/YYYY HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm") < 30 ){
-            console.log(moment.utc(moment(now, "YYYY-MM-D HH:mm:ss").diff(moment(promise.promise_time,"DD/MM/YYYY HH:mm:ss"))).format("mm"));
+        var LIMIT_TIME = 30;
+        var DIFF_TIME = moment.utc(moment(promise.promise_time,"DD/MM/YYYY HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
+        
+        if ( DIFF_TIME < LIMIT_TIME ){
             return res.status(403).send({message: '이미 기간이 만료된 약속입니다.'})
         }
-        console.log("2");
+        
         result = await Participant.findAndCountAll({
             where: {
                 id: req.params.id
             }
         });
-        console.log("3");
+        
         if ( (promise.maxPeople <= result.count)){
             return res.status(403).send({message: '이미 완료된 약속입니다.'})
         }
-        console.log(req.user);
+        
         newPariticipant = await Participant.create({
             promise_id: promise.id,
             user_id: req.user.user_id
         });
-        console.log("5");
+        
     } catch ( error ) {
         console.log(error);
         return res.status(500).send(error);
