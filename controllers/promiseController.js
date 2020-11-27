@@ -33,7 +33,8 @@ export const makePromise = async (req, res, next) => {
                 name: req.body.name,
                 user_id: req.body.user_id,
                 place: req.body.place,
-                max_people: req.body.max_people
+                max_people: req.body.max_people,
+                date: req.body.date
             });
         };
     } catch (error) {
