@@ -1,5 +1,5 @@
 //import { getPromiseLists, makePromise, deletePromise, getPromiseDetail, joinPromise } from "../controllers/promiseController";
-const { Promise, Sequelize: { Op } } = require('../models');
+const { Promise, Sequelize: { Op }, Participant } = require('../models');
 
 export const getPromiseLists = async (req, res) => {
     let result = '';
@@ -14,6 +14,7 @@ export const getPromiseLists = async (req, res) => {
 
 export const makePromise = async (req, res, next) => {
     let newPromise = '';
+    let newParticipant = '';
     console.log('sent: ' + req.body.user_id);
     try {
         console.log('여기까진?1');
@@ -35,6 +36,9 @@ export const makePromise = async (req, res, next) => {
                 place: req.body.place,
                 max_people: req.body.max_people,
                 date: req.body.date
+            });
+            newParticipant = await Participant.create({
+                user_id: req.body.user_id
             });
         };
     } catch (error) {
