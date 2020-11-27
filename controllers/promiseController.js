@@ -12,9 +12,36 @@ export const getPromiseLists = async (req, res) => {
     return res.status(200).json(result);
 }
 
-export const makePromise = (req, res) => {
-    res.send("makePromise");
+export const makePromise = async (req, res, next) => {
+    let newPromise = '';
+    try {
+        const promise = await Promise.findOne({
+            where: {
+                user_id: req.body.user_id,
+                date: req.body.date
+            }
+        });
+
+        if (promise) {
+            return res.status(403).send({ 'message': '이미 이 날짜에 등록된 약속이 있습니다' };)
+        } else {
+            newPromise = await Promise.create({
+                name: req.body.name,
+                user_id: req.body.user_id,
+                place: req.body.place,
+                max_people: req.body.max_people
+            });
+        };
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+    req.newPromise = newPromise.dataValues;
+    return next();
 }
+
+/*export const makePromise = (req, res) => {
+    res.send("makePromise");
+}*/
 
 export const deletePromise = (req, res) => {
     res.send("deletePromise");
