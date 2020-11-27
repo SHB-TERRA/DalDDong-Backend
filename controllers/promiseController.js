@@ -16,6 +16,7 @@ export const makePromise = async (req, res, next) => {
     let newPromise = '';
     console.log('sent: ' + req.body.user_id);
     try {
+        console.log('여기까진?1');
         const promise = await Promise.findOne({
             where: {
                 user_id: req.body.user_id,
@@ -24,8 +25,10 @@ export const makePromise = async (req, res, next) => {
         });
 
         if (promise) {
+            console.log('여기까진?2');
             return res.status(403).send({ 'message': '이미 이 날짜에 등록된 약속이 있습니다' });
         } else {
+            console.log('여기까진?3');
             newPromise = await Promise.create({
                 name: req.body.name,
                 user_id: req.body.user_id,
