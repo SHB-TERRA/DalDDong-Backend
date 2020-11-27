@@ -39,7 +39,7 @@ export const makePromise = async (req, res, next) => {
             });
             newParticipant = await Participant.create({
                 user_id: req.body.user_id,
-                promise_id: user.id
+                promise_id: newPromise.id
             });
         };
     } catch (error) {
