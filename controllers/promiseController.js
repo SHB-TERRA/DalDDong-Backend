@@ -23,7 +23,7 @@ export const makePromise = async (req, res, next) => {
         });
 
         if (promise) {
-            return res.status(403).send({ 'message': '이미 이 날짜에 등록된 약속이 있습니다' };)
+            return res.status(403).send({ 'message': '이미 이 날짜에 등록된 약속이 있습니다' });
         } else {
             newPromise = await Promise.create({
                 name: req.body.name,
