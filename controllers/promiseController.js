@@ -40,8 +40,9 @@ export const makePromise = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send(error);
     }
-
+    console.log('111');
     req.newPromise = newPromise.dataValues;
+    console.log('222');
     return next();
 }
 
