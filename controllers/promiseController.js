@@ -33,7 +33,7 @@ export const makePromise = async (req, res) => {
             name: req.body.title,
             user_id: req.body.user_id,
             is_board: true
-            // user_id: req.user.user_id TODO user_id 필수 구현 후 이 코드로 변경
+            // user_id: req.user.user_id TODO user_id �ʼ� ���� �� �� �ڵ�� ����
         });
 
         newPariticipant = await Participant.create({
@@ -62,7 +62,7 @@ export const deletePromise = async (req, res) => {
         });
 
         if (!newPromise) {
-            return res.status(500).json({message: '등록한 사람만 삭제가 가능합니다'});
+            return res.status(500).json({message: '����� ����� ������ �����մϴ�'});
         }
 
         newPariticipant = await Participant.destroy({
