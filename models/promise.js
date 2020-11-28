@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             user_id:{
                 type:DataTypes.STRING(20),
-                allowNull:false,
-                unique: true
+                allowNull: false,
+                unique: false
             },
             date:{
                 type:DataTypes.DATE,
