@@ -42,13 +42,10 @@ export const makePromise = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send(error);
     }
+
     req.newPromise = newPromise.dataValues;
     return next();
 }
-
-/*export const makePromise = (req, res) => {
-    res.send("makePromise");
-}*/
 
 export const deletePromise = (req, res) => {
     res.send("deletePromise");
