@@ -10,7 +10,8 @@ export const getMyCalendar = async (req, res, next) => {
                 model: Promise
             }],
             where:{
-                user_id: req.body.user_id,                
+                user_id: req.body.user_id,  
+                //TODO DATETIME
             }
         });
         console.log(result);
