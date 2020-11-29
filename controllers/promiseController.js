@@ -84,7 +84,7 @@ export const getPromiseDetail = async (req, res) => {
     try {
         newPromise = await Promise.findAll({
             where: {
-                promise_id: req.body.promise_id
+                id: req.body.promise_id
             }
         });
     } catch (error) {
