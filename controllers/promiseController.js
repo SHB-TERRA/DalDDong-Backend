@@ -129,7 +129,7 @@ export const joinPromise = async (req, res) => {
 
         newPariticipant = await Participant.create({
             promise_id: promise.id,
-            user_id: req.user.user_id
+            user_id: req.user_id
         });
 
     } catch (error) {
