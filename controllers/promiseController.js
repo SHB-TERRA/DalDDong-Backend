@@ -103,7 +103,9 @@ export const joinPromise = async (req, res) => {
 
     try {
         promise = await Promise.findAll({
-            id: req.params.id
+            where: {
+                id: req.params.id
+            }
         });
 
         var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
