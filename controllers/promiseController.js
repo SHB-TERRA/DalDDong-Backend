@@ -20,11 +20,11 @@ export const getPromiseLists = async (req, res) => {
 
 export const makePromise = async (req, res) => {
     let newPromise = '';
-    let parsedTime  = '';
+    let parsedTime = '';
     let newPariticipant = '';
     try {
         parsedTime = moment(req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
-        
+
         newPromise = await Promise.create({
             meeting_place: req.body.meeting_place,
             place: req.body.place,
@@ -33,7 +33,7 @@ export const makePromise = async (req, res) => {
             name: req.body.title,
             user_id: req.body.user_id,
             is_board: true
-            // user_id: req.user.user_id TODO user_id ï¿½Ê¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            // user_id: req.user.user_id TODO user_id ÇÊ¼ö ±¸Çö ÈÄ ÀÌ ÄÚµå·Î º¯°æ
         });
 
         newPariticipant = await Participant.create({
@@ -41,100 +41,133 @@ export const makePromise = async (req, res) => {
             user_id: newPromise.user_id
         });
 
-    } catch ( error ) {
+    } catch (error) {
         console.log(error);
         return res.status(500).send(error);
     }
     return res.status(200).json(newPromise);
-}
+    export const makePromise = async (req, res, next) => {
+        let newPromise = '';
+        let newParticipant = '';
+        console.log('sent: ' + req.body.user_id);
+        try {
+            const promise = await Promise.findOne({
+                where: {
+                    user_id: req.body.user_id,
+                    date: req.body.date
+                }
+            });
 
-export const deletePromise = async (req, res) => {
-
-    let newPromise = '';
-    let newPariticipant = '';
-
-    try {
-        newPromise = await Promise.destroy({
-            where: {
-                id: req.params.id,
-                user_id: req.user.user_id
-            }
-        });
-
-        if (!newPromise) {
-            return res.status(500).json({message: 'ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½'});
+            if (promise) {
+                return res.status(403).send({ 'message': 'ÀÌ¹Ì ÀÌ ³¯Â¥¿¡ µî·ÏµÈ ¾à¼ÓÀÌ ÀÖ½À´Ï´Ù' });
+            } else {
+                newPromise = await Promise.create({
+                    name: req.body.name,
+                    user_id: req.body.user_id,
+                    place: req.body.place,
+                    max_people: req.body.max_people,
+                    date: req.body.date
+                });
+                newParticipant = await Participant.create({
+                    user_id: req.body.user_id,
+                    promise_id: newPromise.id
+                });
+            };
+        } catch (error) {
+            return res.status(500).send(error);
         }
 
-        newPariticipant = await Participant.destroy({
-            where: {
-                promise_id: req.params.id
-            }
-        });
-
-    } catch ( error ) {
-        console.log(error);
-        return res.status(500).send(error);
-    }
-    return res.status(200).json({message: "success"});
-}
-
-export const getPromiseDetail = async (req, res) => {
-
-    let newPromise = '';
-    try {
-        newPromise = await Promise.findAll({
-            where: {
-                id: req.body.promise_id
-            }
-        });
-    } catch ( error ) {
-        console.log(error);
-        return res.status(500).send(error);
+        req.newPromise = newPromise.dataValues;
+        return next();
     }
 
-    return res.status(200).json(newPromise);
+    export const deletePromise = async (req, res) => {
 
-}
+        let newPromise = '';
+        let newPariticipant = '';
 
-export const joinPromise = async (req, res) => {
-    let promise = '';    
-    let result = '';
-    let newPariticipant = '';
+        try {
+            newPromise = await Promise.destroy({
+                where: {
+                    id: req.params.id,
+                    user_id: req.user.user_id
+                }
+            });
 
-    try {
-        promise = await Promise.findAll({
-            id: req.params.id
-        });
-        
-        var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
+            if (!newPromise) {
+                return res.status(500).json({ message: 'µî·ÏÇÑ »ç¶÷¸¸ »èÁ¦°¡ °¡´ÉÇÕ´Ï´Ù' });
+            }
 
-        var LIMIT_TIME = 30;
-        var DIFF_TIME = moment.utc(moment(promise.promise_time,"YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
-        
-        if ( DIFF_TIME < LIMIT_TIME ){
-            return res.status(403).send({message: 'ì´ë¯¸ ê¸°ê°„ì´ ë§Œë£Œëœ ì•½ì†ìž…ë‹ˆë‹¤.'})
+            newPariticipant = await Participant.destroy({
+                where: {
+                    promise_id: req.params.id
+                }
+            });
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
         }
-        
-        result = await Participant.findAndCountAll({
-            where: {
+        return res.status(200).json({ message: "success" });
+    }
+
+    export const getPromiseDetail = async (req, res) => {
+
+        let newPromise = '';
+        try {
+            newPromise = await Promise.findAll({
+                where: {
+                    id: req.body.promise_id
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
+
+        return res.status(200).json(newPromise);
+
+    }
+
+    export const joinPromise = async (req, res) => {
+        let promise = '';
+        let result = '';
+        let newPariticipant = '';
+
+        try {
+            promise = await Promise.findAll({
                 id: req.params.id
+            });
+
+            var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
+
+            var LIMIT_TIME = 30;
+            var DIFF_TIME = moment.utc(moment(promise.promise_time, "YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
+
+            if (DIFF_TIME < LIMIT_TIME) {
+                return res.status(403).send({ message: 'ÀÌ¹Ì ±â°£ÀÌ ¸¸·áµÈ ¾à¼ÓÀÔ´Ï´Ù.' });
             }
-        });
-        
-        if ( (promise.maxPeople <= result.count)){
-            return res.status(403).send({message: 'ì´ë¯¸ ì™„ë£Œëœ ì•½ì†ìž…ë‹ˆë‹¤.'})
+
+            result = await Participant.findAndCountAll({
+                where: {
+                    id: req.params.id
+                }
+            });
+
+            if ((promise.maxPeople <= result.count)) {
+                return res.status(403).send({ message: 'ÀÌ¹Ì ¿Ï·áµÈ ¾à¼ÓÀÔ´Ï´Ù.' });
+            }
+
+            newPariticipant = await Participant.create({
+                promise_id: promise.id,
+                user_id: req.user.user_id
+            });
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
         }
-        
-        newPariticipant = await Participant.create({
-            promise_id: promise.id,
-            user_id: req.user.user_id
-        });
-        
-    } catch ( error ) {
-        console.log(error);
-        return res.status(500).send(error);
+
+        return res.status(200).json(newPariticipant);
     }
-
-    return res.status(200).json(newPariticipant);
 }
-
