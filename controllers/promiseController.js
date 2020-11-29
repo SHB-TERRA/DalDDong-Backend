@@ -117,7 +117,7 @@ export const joinPromise = async (req, res) => {
 
         result = await Participant.findAndCountAll({
             where: {
-                id: req.params.id
+                promise_id: req.params.id
             }
         });
 
