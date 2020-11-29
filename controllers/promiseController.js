@@ -46,128 +46,94 @@ export const makePromise = async (req, res) => {
         return res.status(500).send(error);
     }
     return res.status(200).json(newPromise);
-    export const makePromise = async (req, res, next) => {
-        let newPromise = '';
-        let newParticipant = '';
-        console.log('sent: ' + req.body.user_id);
-        try {
-            const promise = await Promise.findOne({
-                where: {
-                    user_id: req.body.user_id,
-                    date: req.body.date
-                }
-            });
+}
 
-            if (promise) {
-                return res.status(403).send({ 'message': '이미 이 날짜에 등록된 약속이 있습니다' });
-            } else {
-                newPromise = await Promise.create({
-                    name: req.body.name,
-                    user_id: req.body.user_id,
-                    place: req.body.place,
-                    max_people: req.body.max_people,
-                    date: req.body.date
-                });
-                newParticipant = await Participant.create({
-                    user_id: req.body.user_id,
-                    promise_id: newPromise.id
-                });
-            };
-        } catch (error) {
-            return res.status(500).send(error);
-        }
+export const deletePromise = async (req, res) => {
 
-        req.newPromise = newPromise.dataValues;
-        return next();
-    }
+    let newPromise = '';
+    let newPariticipant = '';
 
-    export const deletePromise = async (req, res) => {
-
-        let newPromise = '';
-        let newPariticipant = '';
-
-        try {
-            newPromise = await Promise.destroy({
-                where: {
-                    id: req.params.id,
-                    user_id: req.user.user_id
-                }
-            });
-
-            if (!newPromise) {
-                return res.status(500).json({ message: '등록한 사람만 삭제가 가능합니다' });
-            }
-
-            newPariticipant = await Participant.destroy({
-                where: {
-                    promise_id: req.params.id
-                }
-            });
-
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send(error);
-        }
-        return res.status(200).json({ message: "success" });
-    }
-
-    export const getPromiseDetail = async (req, res) => {
-
-        let newPromise = '';
-        try {
-            newPromise = await Promise.findAll({
-                where: {
-                    id: req.body.promise_id
-                }
-            });
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send(error);
-        }
-
-        return res.status(200).json(newPromise);
-
-    }
-
-    export const joinPromise = async (req, res) => {
-        let promise = '';
-        let result = '';
-        let newPariticipant = '';
-
-        try {
-            promise = await Promise.findAll({
-                id: req.params.id
-            });
-
-            var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
-
-            var LIMIT_TIME = 30;
-            var DIFF_TIME = moment.utc(moment(promise.promise_time, "YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
-
-            if (DIFF_TIME < LIMIT_TIME) {
-                return res.status(403).send({ message: '이미 기간이 만료된 약속입니다.' });
-            }
-
-            result = await Participant.findAndCountAll({
-                where: {
-                    id: req.params.id
-                }
-            });
-
-            if ((promise.maxPeople <= result.count)) {
-                return res.status(403).send({ message: '이미 완료된 약속입니다.' });
-            }
-
-            newPariticipant = await Participant.create({
-                promise_id: promise.id,
+    try {
+        newPromise = await Promise.destroy({
+            where: {
+                id: req.params.id,
                 user_id: req.user.user_id
-            });
+            }
+        });
 
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send(error);
+        if (!newPromise) {
+            return res.status(500).json({ message: '등록한 사람만 삭제가 가능합니다' });
         }
 
-        return res.status(200).json(newPariticipant);
+        newPariticipant = await Participant.destroy({
+            where: {
+                promise_id: req.params.id
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
     }
+    return res.status(200).json({ message: "success" });
+}
+
+export const getPromiseDetail = async (req, res) => {
+
+    let newPromise = '';
+    try {
+        newPromise = await Promise.findAll({
+            where: {
+                id: req.body.promise_id
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+
+    return res.status(200).json(newPromise);
+
+}
+
+export const joinPromise = async (req, res) => {
+    let promise = '';
+    let result = '';
+    let newPariticipant = '';
+
+    try {
+        promise = await Promise.findAll({
+            id: req.params.id
+        });
+
+        var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
+
+        var LIMIT_TIME = 30;
+        var DIFF_TIME = moment.utc(moment(promise.promise_time, "YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
+
+        if (DIFF_TIME < LIMIT_TIME) {
+            return res.status(403).send({ message: '이미 기간이 만료된 약속입니다.' });
+        }
+
+        result = await Participant.findAndCountAll({
+            where: {
+                id: req.params.id
+            }
+        });
+
+        if ((promise.maxPeople <= result.count)) {
+            return res.status(403).send({ message: '이미 완료된 약속입니다.' });
+        }
+
+        newPariticipant = await Participant.create({
+            promise_id: promise.id,
+            user_id: req.user.user_id
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+
+    return res.status(200).json(newPariticipant);
 }
