@@ -135,17 +135,15 @@ export const login = async (req, res, next) => {
             return next(err);
         }
         if (!user) {
-            /*return res.status(403).json({
+            return res.status(403).json({
                 info,
                 result: '로그인 실패'
-            });*/
-            return res.redirect('/login');
+            });
         }
    
         req.logIn(user, function(err) {
             if (err) return next(err);
-            //return res.status(200).json(user);
-            return res.redirect('/users/' + user.user_id);
+            return res.status(200).json(user);
         });
 
     })(req, res, next);
