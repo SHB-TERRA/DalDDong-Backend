@@ -20,11 +20,11 @@ export const getPromiseLists = async (req, res) => {
 
 export const makePromise = async (req, res) => {
     let newPromise = '';
-    let parsedTime  = '';
+    let parsedTime = '';
     let newPariticipant = '';
     try {
         parsedTime = moment(req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
-        
+
         newPromise = await Promise.create({
             meeting_place: req.body.meeting_place,
             place: req.body.place,
@@ -40,7 +40,7 @@ export const makePromise = async (req, res) => {
             user_id: newPromise.user_id
         });
 
-    } catch ( error ) {
+    } catch (error) {
         console.log(error);
         return res.status(500).send(error);
     }
@@ -61,7 +61,7 @@ export const deletePromise = async (req, res) => {
         });
 
         if (!newPromise) {
-            return res.status(500).json({message: '����� ����� ������ �����մϴ�'});
+            return res.status(500).json({ message: '����� ����� ������ �����մϴ�' });
         }
 
         newPariticipant = await Participant.destroy({
@@ -70,11 +70,11 @@ export const deletePromise = async (req, res) => {
             }
         });
 
-    } catch ( error ) {
+    } catch (error) {
         console.log(error);
         return res.status(500).send(error);
     }
-    return res.status(200).json({message: "success"});
+    return res.status(200).json({ message: "success" });
 }
 
 export const getPromiseDetail = async (req, res) => {
@@ -86,7 +86,7 @@ export const getPromiseDetail = async (req, res) => {
                 id: req.params.id
             }
         });
-    } catch ( error ) {
+    } catch (error) {
         console.log(error);
         return res.status(500).send(error);
     }
@@ -96,44 +96,45 @@ export const getPromiseDetail = async (req, res) => {
 }
 
 export const joinPromise = async (req, res) => {
-    let promise = '';    
+    let promise = '';
     let result = '';
     let newPariticipant = '';
 
     try {
         promise = await Promise.findAll({
-            id: req.params.id
-        });
-        
-        var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
-
-        var LIMIT_TIME = 30;
-        var DIFF_TIME = moment.utc(moment(promise.promise_time,"YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
-        
-        if ( DIFF_TIME < LIMIT_TIME ){
-            return res.status(403).send({message: '이미 기간이 만료된 약속입니다.'})
-        }
-        
-        result = await Participant.findAndCountAll({
             where: {
                 id: req.params.id
             }
         });
-        
-        if ( (promise.maxPeople <= result.count)){
-            return res.status(403).send({message: '이미 완료된 약속입니다.'})
+
+        var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
+
+        var LIMIT_TIME = 30;
+        var DIFF_TIME = moment.utc(moment(promise.promise_time, "YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
+
+        if (DIFF_TIME < LIMIT_TIME) {
+            return res.status(403).send({ message: '�̹� �Ⱓ�� ����� ����Դϴ�.' });
         }
-        
+
+        result = await Participant.findAndCountAll({
+            where: {
+                promise_id: req.params.id
+            }
+        });
+
+        if ((promise.maxPeople <= result.count)) {
+            return res.status(403).send({ message: '�̹� �Ϸ�� ����Դϴ�.' });
+        }
+
         newPariticipant = await Participant.create({
             promise_id: promise.id,
-            user_id: req.user.user_id
+            user_id: req.body.user_id
         });
-        
-    } catch ( error ) {
+
+    } catch (error) {
         console.log(error);
         return res.status(500).send(error);
     }
 
     return res.status(200).json(newPariticipant);
 }
-
