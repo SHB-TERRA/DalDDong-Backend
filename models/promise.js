@@ -9,10 +9,10 @@ module.exports = (sequelize, DataTypes) => {
             },
             user_id:{
                 type:DataTypes.STRING(20),
-                allowNull:false,
-                unique: true
+                allowNull: false,
+                unique: false
             },
-            date:{
+            promise_time:{
                 type:DataTypes.DATE,
                 allowNull:false
             },
@@ -20,9 +20,18 @@ module.exports = (sequelize, DataTypes) => {
                 type:DataTypes.STRING(60),
                 allowNull:false
             },
+            meeting_place:{
+                type:DataTypes.STRING(60),
+                allowNull:false
+            },
             max_people:{
                 type:DataTypes.INTEGER,
                 allowNull:false
+            },
+            is_board:{
+                type:DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         },
         {
@@ -32,3 +41,4 @@ module.exports = (sequelize, DataTypes) => {
         }
     )
 }
+
