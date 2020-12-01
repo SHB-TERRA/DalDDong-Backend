@@ -1,20 +1,29 @@
-import user from '../models/user';
+import promise from '../models/promise';
 
-const { User, Promise, Participant, Sequelize: { Op } } = require('../models');
+const { User, Promise, Participant, Sequelize: { Op }, sequelize } = require('../models');
+const { QueryTypes } = require('sequelize');
 
 export const getMyCalendar = async (req, res, next) => {
-    let result = '';
+    let promiseArrs = '';
+    let result = {};
     try {
-        result = await Participant.findAll({
-            include:[{
-                model: Promise
-            }],
-            where:{
-                user_id: req.body.user_id,  
-                //TODO DATETIME
-            }
+        const QUERY = "SELECT A.user_id, C.name, D.name AS title, D.id AS promise_id, D.promise_time, D.place, D.meeting_place, D.max_people "
+        + "FROM participants A "
+        + "JOIN (SELECT participants.id FROM participants JOIN users ON participants.user_id=users.user_id where users.id = " + req.params.id + ") "
+        + "B ON A.id = B.id "
+        + "JOIN users C ON C.user_id = A.user_id " 
+        + "JOIN promises D ON D.id = A.promise_id";
+        promiseArrs = await sequelize.query(QUERY, { type: QueryTypes.SELECT });
+        
+        console.log(promiseArrs);
+        promiseArrs.forEach(function(promise){
+            console.log(promise)
+            var p_id = promise.promise_id
+            if (!result[p_id]) result[p_id] = [promise];
+            else resulut[p_id].push(promise);
         });
-        console.log(result);
+        
+        // { promise1: [{}], promise2: [{}]}
     } catch (error) {
         console.log(error);
         return res.status(500).send(error);

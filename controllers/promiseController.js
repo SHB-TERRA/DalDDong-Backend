@@ -33,7 +33,6 @@ export const makePromise = async (req, res) => {
             name: req.body.title,
             user_id: req.body.user_id,
             is_board: true
-            // user_id: req.user.user_id TODO user_id �ʼ� ���� �� �� �ڵ�� ����
         });
 
         newPariticipant = await Participant.create({
@@ -84,7 +83,7 @@ export const getPromiseDetail = async (req, res) => {
     try {
         newPromise = await Promise.findAll({
             where: {
-                id: req.body.promise_id
+                id: req.params.id
             }
         });
     } catch ( error ) {
