@@ -25,10 +25,9 @@ export const makePromise = async (req, res) => {
     try {
         if (req.body.promise_time.length == 5) 
             req.body.promise_time = req.body.promise_time + ":00";
-        //parsedTime = moment(req.body.promise_day+ ' '+req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
-        parsedTime = moment(req.body.promise_day, 'YYYY-MM-DD')
+        parsedTime = moment(req.body.promise_day+ ' '+req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
+        
 
-        console.log(parsedTime);
         //내 약속 겹치는지 확인
         /*let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
                         'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
@@ -38,8 +37,8 @@ export const makePromise = async (req, res) => {
         let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
             'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
             'ON A.user_id = D.user_id WHERE A.user_id = ' + req.body.user_id + " "
-            //'AND DATE_FORMAT(D.promise_day, "%Y-%m-%d") = ' + req.body.promise_day;
-            'AND D.promise_day = ' + req.body.promise_day;
+            'AND DATE_FORMAT(D.promise_day, "%Y-%m-%d") = DATE_FORMAT( '+ req.body.promise_day + ', "%Y-%m-%d")';
+
         var result = await sequelize.query(
             QUERY,
             {type: QueryTypes.SELECT});
