@@ -28,6 +28,7 @@ export const makePromise = async (req, res) => {
         //parsedTime = moment(req.body.promise_day+ ' '+req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
         parsedTime = moment(req.body.promise_day, 'YYYY-MM-DD')
 
+        console.log(parsedTime);
         //내 약속 겹치는지 확인
         /*let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
                         'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
