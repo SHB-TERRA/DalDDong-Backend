@@ -25,7 +25,8 @@ export const makePromise = async (req, res) => {
     try {
         if (req.body.promise_time.length == 5) 
             req.body.promise_time = req.body.promise_time + ":00";
-        parsedTime = moment(req.body.promise_day+ ' '+req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
+        //parsedTime = moment(req.body.promise_day+ ' '+req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
+        parsedTime = moment(req.body.promise_day, 'YYYY-MM-DD')
 
         //내 약속 겹치는지 확인
         /*let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
