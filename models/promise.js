@@ -12,9 +12,17 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 unique: false
             },
-            promise_time:{
+/*            promise_time:{
                 type:DataTypes.DATE,
                 allowNull:false
+            }*/
+            promise_day: {
+                type: DataTypes.DATE,
+                allowNull: false
+            },
+            promise_time: {
+                type: DataTypes.TIME,
+                allowNull: false
             },
             place:{
                 type:DataTypes.STRING(60),

@@ -28,11 +28,16 @@ export const makePromise = async (req, res) => {
         parsedTime = moment(req.body.promise_day+ ' '+req.body.promise_time, 'YYYY-MM-D HH:mm:ss');
 
         //내 약속 겹치는지 확인
-        let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
+        /*let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
                         'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
                         'ON A.user_id = D.user_id WHERE A.user_id = ' +req.body.user_id + " "
                         'AND DATE_FORMAT(D.promise_time, "%Y-%m-%d") = ' + req.body.promise_day;
-                       
+        */
+        let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
+            'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
+            'ON A.user_id = D.user_id WHERE A.user_id = ' + req.body.user_id + " "
+            'AND DATE_FORMAT(D.promise_day, "%Y-%m-%d") = ' + req.body.promise_day;
+
         var result = await sequelize.query(
             QUERY,
             {type: QueryTypes.SELECT});
@@ -44,7 +49,9 @@ export const makePromise = async (req, res) => {
             meeting_place: req.body.meeting_place,
             place: req.body.place,
             max_people: req.body.max_people,
-            promise_time: parsedTime,
+            promise_day: req.body.promise_day,
+            promise_time: req.body.promise_time,
+            //promise_time: parsedTime,
             name: req.body.title,
             user_id: req.body.user_id,
             is_board: true
@@ -105,8 +112,7 @@ export const getPromiseDetail = async (req, res) => {
         console.log(error);
         return res.status(500).send(error);
     }
-
-    console.log("##" + newPromise);   
+    
     return res.status(200).json(newPromise);
 
 }
@@ -153,11 +159,16 @@ export const joinPromise = async (req, res) => {
             return res.status(403).send({ message: '이미 등록한 약속입니다' });
 
         //내 약속 겹치는지 확인
-        let QUERY = "SELECT A.user_id FROM users A JOIN ( " + 
+        /*let QUERY = "SELECT A.user_id FROM users A JOIN ( " + 
                         "SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D " +
                         "ON A.user_id = D.user_id WHERE A.user_id = " +req.body.user_id + " "+
-                        "AND DATE_FORMAT(D.promise_time, '%Y-%m-%d') = DATE_FORMAT('" + promise.promise_time + "', '%Y-%m-%d')";
-                       
+                        "AND DATE_FORMAT(D.promise_time, '%Y-%m-%d') = DATE_FORMAT('" + promise.promise_time + "', '%Y-%m-%d')";*/
+
+        let QUERY = "SELECT A.user_id FROM users A JOIN ( " +
+            "SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D " +
+            "ON A.user_id = D.user_id WHERE A.user_id = " + req.body.user_id + " " +
+            "AND DATE_FORMAT(D.promise_day, '%Y-%m-%d') = DATE_FORMAT('" + promise.promise_day + "', '%Y-%m-%d')";
+
         var myPromiseOnDay = await sequelize.query(
             QUERY,
             {type: QueryTypes.SELECT});
