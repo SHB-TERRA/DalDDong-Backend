@@ -106,6 +106,7 @@ export const getPromiseDetail = async (req, res) => {
         return res.status(500).send(error);
     }
 
+    console.log(newPromise.promise_time);   
     return res.status(200).json(newPromise);
 
 }
