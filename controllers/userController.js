@@ -26,7 +26,7 @@ export const join = async (req, res, next) => {
             newUser = await User.create({
                 name: req.body.name,
                 email: req.body.email,
-                user_id: req.body.userId,
+                user_id: req.body.user_id,
                 password: crypto.createHash('sha512').update(req.body.password).digest('base64'),
                 key_for_verify
             });
