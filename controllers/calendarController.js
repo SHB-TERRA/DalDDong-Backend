@@ -8,21 +8,26 @@ export const getMyCalendar = async (req, res, next) => {
     let promiseArrs = '';
     let result = {};
     try {
-        let START_DAY = moment().startOf('month').format("YYYY-MM-D").toString();
-        let END_DAY = moment().endOf('month').format("YYYY-MM-D").toString()
+        let MONTH = req.body.month;
+        let START_DAY = moment(MONTH, 'YYYY-MM').startOf('month').format("YYYY-MM-D").toString();
+        let END_DAY = moment(MONTH, 'YYYY-MM').endOf('month').format("YYYY-MM-D").toString()
         const QUERY = "SELECT A.user_id, C.name, D.name AS title, D.id AS promise_id, DAY(D.promise_time) AS promise_day, TIME(D.promise_time) AS time,  D.place, D.meeting_place, D.max_people "
         + "FROM participants A "
-        + "JOIN (SELECT participants.id FROM participants JOIN users ON participants.user_id=users.user_id where users.id = " + req.params.id + ") "
-        + "B ON A.id = B.id "
+        + "JOIN (SELECT participants.promise_id FROM participants JOIN users ON participants.user_id=users.user_id where users.id = " + req.params.id + ") "
+        + "B ON A.promise_id = B.promise_id "
         + "JOIN users C ON C.user_id = A.user_id " 
         + "JOIN promises D ON D.id = A.promise_id "
         + "WHERE DATE_FORMAT(D.promise_time, '%Y-%m-%d') BETWEEN DATE_FORMAT('" + START_DAY + "' , '%Y-%m-%d') AND DATE_FORMAT('" + END_DAY +"' , '%Y-%m-%d')";
         promiseArrs = await sequelize.query(QUERY, { type: QueryTypes.SELECT });
-
+        
         for (var promise of promiseArrs) {
             var DAY = promise.promise_day;
-
-            result[DAY] = promise;
+            if ( result[DAY] ) {
+                result[DAY].push(promise);
+            } else {
+                result[DAY] = new Array();
+                result[DAY].push(promise);
+            }
         }
         
     } catch (error) {
@@ -118,7 +123,7 @@ export const addPromise = async (req, res) => {
           
             let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
                         'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
-                        'ON A.user_id = D.user_id WHERE A.user_id = $user_val AND DATE_FORMAT(D.promise_time, "%Y-%m-%d") = ' + req.body.promise_day;
+                        'ON A.user_id = D.user_id WHERE A.user_id = $user_val AND DATE_FORMAT(D.promise_time, "%Y-%m-%d") = "' + req.body.promise_day+'"';
                        
             var result = await sequelize.query(
                 QUERY,
@@ -127,8 +132,8 @@ export const addPromise = async (req, res) => {
                   type: QueryTypes.SELECT
                 }
               );
-              
-            if ( result.lenght > 0 ) {
+            
+            if ( result.length > 0 ) {
                 falseResults.push(result);
                 break;
             }
@@ -138,7 +143,7 @@ export const addPromise = async (req, res) => {
                 promise_id: newPromise.id
             });
         }
-
+        
         if (falseResults.length > 0) {
             await Promise.destroy({
                 where:{

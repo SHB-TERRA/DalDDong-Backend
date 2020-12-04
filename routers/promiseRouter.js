@@ -9,6 +9,6 @@ promiseRouter.post(routes.home, makePromise);
 
 promiseRouter.delete(routes.promiseDetail(), deletePromise);
 promiseRouter.get(routes.promiseDetail(), getPromiseDetail);
-promiseRouter.put(routes.promiseDetail(), joinPromise);
+promiseRouter.post(routes.promiseDetail(), joinPromise);
 
 export default promiseRouter;
