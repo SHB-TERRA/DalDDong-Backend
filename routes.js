@@ -3,6 +3,7 @@ const HOME = "/";
 // Users
 const USERS = "/users";
 const USER_DETAIL = "/:id";
+const INFO = "/info";
 const USER_PROMISES = "/:id/promises";
 const AUTH = "/auth";
 const LOGIN="/login";
@@ -27,6 +28,7 @@ const routes = {
             return USER_DETAIL;
         }
     },
+    info: INFO,
     userPromises: USER_PROMISES,
     promises: PROMISES,
     promiseDetail: id => {

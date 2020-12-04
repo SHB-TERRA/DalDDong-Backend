@@ -161,19 +161,29 @@ export const getUserProfile = (req, res) => {
 
 export const editUser = async (req, res) => {
     let user = '';
+
     try {
+
         user = await User.findOne({ 
             where: {
                 id: req.params.id
             }
         });
+
+        if( user.id != req.user.id) return res.status(403).json({message: '잘못된 요청입니다'});
+
         if (!user) return res.status(403).json({message: '일치하는 유저 정보가 없습니다.'});
 
         if ( !req.body.nickname || req.body.nickname.length == 0) req.body.nickname = user.nickname;
-        if ( !req.body.password || req.body.password.length == 0) req.body.password = user.password;
+        if ( !req.body.password || req.body.password.length == 0) {
+            req.body.password = user.password;
+        } else{
+            req.body.password = crypto.createHash('sha512').update(req.body.password).digest('base64');
+        }
+
         await User.update({ 
             nickname: req.body.nickname,
-            password: crypto.createHash('sha512').update(req.body.password).digest('base64'),
+            password: req.body.password,
         }, {
             where: {
                 id: req.params.id
@@ -184,7 +194,8 @@ export const editUser = async (req, res) => {
         console.log(error)
         return res.status(500).send(error);
     }
-    return res.status(200).json(user);
+    req.user.nickname = req.body.nickname;
+    return res.status(200).json(req.user);
 }
 
 export const deleteUser = async (req, res) => {

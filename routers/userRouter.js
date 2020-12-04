@@ -8,7 +8,7 @@ const userRouter = express.Router();
 userRouter.post(routes.home, isLogOut, join, sendEmail);
 userRouter.post(routes.auth, isLogOut, authEmail, login);
 userRouter.post(routes.login, login);
-userRouter.get(routes.userDetail(), isLogin, getUserProfile);
+userRouter.get(routes.info, isLogin, getUserProfile);
 userRouter.put(routes.userDetail(), isLogin, editUser);
 userRouter.delete(routes.userDetail(), deleteUser);
 userRouter.post(routes.logout, logout);
