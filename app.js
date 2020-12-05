@@ -14,6 +14,12 @@ import passport from "passport";
 import passportConfig from "./passport";
 import MariaDBStore from "express-session-mariadb-store";
 import flash from "express-flash";
+import cors from "cors";
+
+const corsOptions = {
+    origin: "http://127.0.0.1:2230",
+    credentials: true
+};
 
 passportConfig();
 var sequelize = require('./models').sequelize;
@@ -21,6 +27,7 @@ const app = express();
 sequelize.sync();
 // const MariaDBStore = require('express-session-mariadb-store')
 
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
