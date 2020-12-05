@@ -133,7 +133,9 @@ export const joinPromise = async (req, res) => {
         var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
         
         var LIMIT_TIME = 30;
-        var DIFF_TIME = moment.utc(moment(promise.promise_day + promise.promise_time, "YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
+        var DIFF_TIME = moment.utc(moment(promise.promise_day + promise.promise_time, "YYYY-MM-D HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
+        console.log("##1  " + moment(promise.promise_day + promise.promise_time, "YYYY-MM-D HH:mm:ss"));
+        console.log("##2  " + moment(now, "YYYY-MM-D HH:mm:ss"));
 
         if (DIFF_TIME < LIMIT_TIME) {
             return res.status(403).send({ message: '이미 약속참가 시간이 지났습니다.' });
