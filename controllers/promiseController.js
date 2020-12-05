@@ -37,7 +37,7 @@ export const makePromise = async (req, res) => {
         let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
             'SELECT B.promise_day, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
             'ON A.user_id = D.user_id WHERE A.user_id = ' + req.body.user_id + " " +
-            'AND DATE_FORMAT(D.promise_day, "%Y-%m-%d") = DATE_FORMAT( '+ req.body.promise_day + ', "%Y-%m-%d")';
+            'AND D.promise_day = ( '+ req.body.promise_day + ')';
 
         var result = await sequelize.query(
             QUERY,
@@ -130,12 +130,10 @@ export const joinPromise = async (req, res) => {
             }
         });
 
-        console.log("#1" + promise.promise_day);
         var now = moment().format("YYYY-MM-D HH:mm:ss").toString();
         
         var LIMIT_TIME = 30;
-        var DIFF_TIME = moment.utc(moment(promise.promise_time, "YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
-        console.log("#2" + promise.promise_day);
+        var DIFF_TIME = moment.utc(moment(promise.promise_day + promise.promise_time, "YYYY-MM-D  HH:mm:ss").diff(moment(now, "YYYY-MM-D HH:mm:ss"))).format("mm");
 
         if (DIFF_TIME < LIMIT_TIME) {
             return res.status(403).send({ message: '이미 약속참가 시간이 지났습니다.' });
@@ -168,9 +166,9 @@ export const joinPromise = async (req, res) => {
                         "AND DATE_FORMAT(D.promise_time, '%Y-%m-%d') = DATE_FORMAT('" + promise.promise_time + "', '%Y-%m-%d')";*/
 
         let QUERY = "SELECT A.user_id FROM users A JOIN ( " +
-            "SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D " +
+            "SELECT B.promise_day, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D " +
             "ON A.user_id = D.user_id WHERE A.user_id = " + req.body.user_id + " " +
-            "AND DATE_FORMAT(D.promise_day, '%Y-%m-%d') = DATE_FORMAT('" + promise.promise_day + "', '%Y-%m-%d')";
+            "AND D.promise_day = '" + promise.promise_day + "')";
 
         var myPromiseOnDay = await sequelize.query(
             QUERY,
