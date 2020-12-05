@@ -139,7 +139,7 @@ export const joinPromise = async (req, res) => {
         console.log("##2  " + moment(now, "YYYY-MM-DD HH:mm:ss"));
 
         var PROMISE_DAY = moment(promise.promise_day + ' ' + promise.promise_time, 'YYYY-MM-DD HH:mm:ss');
-        var DIFF_DAY = moment.duration(now.diff(PROMISE_DAY)).asDaus();
+        var DIFF_DAY = moment.duration(now.diff(PROMISE_DAY)).asDays();
         console.log("일차이:", DIFF_DAY);
 
 
