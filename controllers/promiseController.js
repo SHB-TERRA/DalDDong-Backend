@@ -37,7 +37,7 @@ export const makePromise = async (req, res) => {
         let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
             'SELECT B.promise_day, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
             'ON A.user_id = D.user_id WHERE A.user_id = ' + req.body.user_id + " " +
-            'AND D.promise_day = ( '+ req.body.promise_day + ')';
+            'AND D.promise_day = "'+ req.body.promise_day + '"';
 
         var result = await sequelize.query(
             QUERY,
@@ -168,7 +168,7 @@ export const joinPromise = async (req, res) => {
         let QUERY = "SELECT A.user_id FROM users A JOIN ( " +
             "SELECT B.promise_day, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D " +
             "ON A.user_id = D.user_id WHERE A.user_id = " + req.body.user_id + " " +
-            "AND D.promise_day = '" + promise.promise_day + "')";
+            "AND D.promise_day = '" + promise.promise_day + "'";
 
         var myPromiseOnDay = await sequelize.query(
             QUERY,
