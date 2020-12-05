@@ -9,7 +9,7 @@ export const getMyCalendar = async (req, res, next) => {
     let result = {};
     try {
         //let MONTH = req.body.month;
-        let MONTH = moment.now().format('MM');
+        let MONTH = moment().format('MM');
         let START_DAY = moment(MONTH, 'YYYY-MM').startOf('month').format("YYYY-MM-D").toString();
         let END_DAY = moment(MONTH, 'YYYY-MM').endOf('month').format("YYYY-MM-D").toString()
         //const QUERY = "SELECT A.user_id, C.name, D.name AS title, D.id AS promise_id, DAY(D.promise_time) AS promise_day, TIME(D.promise_time) AS time,  D.place, D.meeting_place, D.max_people "
