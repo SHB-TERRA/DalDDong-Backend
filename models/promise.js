@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull:false
             }*/
             promise_day: {
-                type: DataTypes.DATE,
+                type: DataTypes.DATEONLY,
                 allowNull: false
             },
             promise_time: {
