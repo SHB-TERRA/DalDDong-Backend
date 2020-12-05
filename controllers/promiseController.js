@@ -78,7 +78,8 @@ export const deletePromise = async (req, res) => {
     try {
         newPromise = await Promise.destroy({
             where: {
-                id: req.params.id
+                id: req.params.id,
+		user_id: req.query.user_id
             }
         });
 

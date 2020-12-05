@@ -100,7 +100,7 @@ export const addPromise = async (req, res) => {
             //promise_time: parsedTime,
             promise_day: req.body.promise_day,
             promise_time: req.body.promise_time,
-            name: req.body.title || (promise_time + ' ' + req.body.username),
+            name: req.body.title || (req.body.promise_day+ ' ' + req.body.username),
             user_id: req.body.user_id,
             is_board: false
         });
