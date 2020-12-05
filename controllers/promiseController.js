@@ -135,12 +135,12 @@ export const joinPromise = async (req, res) => {
 
         var LIMIT_TIME = 30;
         var DIFF_TIME = moment.utc(moment(promise.promise_day + " " + promise.promise_time, "YYYY-MM-DD HH:mm:ss").diff(moment(now, "YYYY-MM-DD HH:mm:ss"))).format("mm");
-        console.log("##1  " + moment(promise.promise_day + ' ' + promise.promise_time, "YYYY-MM-DD HH:mm:ss"));
+        /*console.log("##1  " + moment(promise.promise_day + ' ' + promise.promise_time, "YYYY-MM-DD HH:mm:ss"));
         console.log("##2  " + moment(now, "YYYY-MM-DD HH:mm:ss"));
 
         var PROMISE_DAY = moment(promise.promise_day + ' ' + promise.promise_time, 'YYYY-MM-DD HH:mm:ss');
         var DIFF_DAY = moment.duration(now.diff(PROMISE_DAY)).asDays();
-        console.log("일차이:", DIFF_DAY);
+        console.log("일차이:", DIFF_DAY);*/
 
 
         if (DIFF_TIME < LIMIT_TIME) {
