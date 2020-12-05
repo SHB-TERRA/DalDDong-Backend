@@ -8,11 +8,10 @@ export const getMyCalendar = async (req, res, next) => {
     let promiseArrs = '';
     let result = {};
     try {
-        //let MONTH = req.body.month;
-        let MONTH = moment().format('MM');
+        let MONTH = req.query.month;
         let START_DAY = moment(MONTH, 'YYYY-MM').startOf('month').format("YYYY-MM-D").toString();
         let END_DAY = moment(MONTH, 'YYYY-MM').endOf('month').format("YYYY-MM-D").toString()
-        //const QUERY = "SELECT A.user_id, C.name, D.name AS title, D.id AS promise_id, DAY(D.promise_time) AS promise_day, TIME(D.promise_time) AS time,  D.place, D.meeting_place, D.max_people "
+        
         const QUERY = "SELECT A.user_id, C.name, D.name AS title, D.id AS promise_id, D.promise_day AS promise_day, D.promise_time AS time,  D.place, D.meeting_place, D.max_people "
         + "FROM participants A "
         + "JOIN (SELECT participants.promise_id FROM participants JOIN users ON participants.user_id=users.user_id where users.id = " + req.params.id + ") "
@@ -20,7 +19,7 @@ export const getMyCalendar = async (req, res, next) => {
         + "JOIN users C ON C.user_id = A.user_id " 
         + "JOIN promises D ON D.id = A.promise_id "
         + "WHERE DATE_FORMAT(D.promise_day, '%Y-%m-%d') BETWEEN DATE_FORMAT('" + START_DAY + "' , '%Y-%m-%d') AND DATE_FORMAT('" + END_DAY + "' , '%Y-%m-%d')";
-        //+ "WHERE DATE_FORMAT(D.promise_time, '%Y-%m-%d') BETWEEN DATE_FORMAT('" + START_DAY + "' , '%Y-%m-%d') AND DATE_FORMAT('" + END_DAY +"' , '%Y-%m-%d')";
+        
         promiseArrs = await sequelize.query(QUERY, { type: QueryTypes.SELECT });
         
         for (var promise of promiseArrs) {

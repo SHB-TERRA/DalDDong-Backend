@@ -37,7 +37,9 @@ app.use(
       store: new MariaDBStore({ 
             user: process.env.MARIA_USER,
             password: process.env.MARIA_PWD,
-            database: process.env.MARIA_DB
+            database: process.env.MARIA_DB,
+	          port: process.env.MARIA_PORT,
+	          host: process.env.MARIA_URL
         })
     })
   );
