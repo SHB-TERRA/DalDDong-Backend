@@ -35,7 +35,7 @@ export const makePromise = async (req, res) => {
                         'AND DATE_FORMAT(D.promise_time, "%Y-%m-%d") = ' + req.body.promise_day;
         */
         let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
-            'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
+            'SELECT B.promise_day, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
             'ON A.user_id = D.user_id WHERE A.user_id = ' + req.body.user_id + " " +
             'AND DATE_FORMAT(D.promise_day, "%Y-%m-%d") = DATE_FORMAT( '+ req.body.promise_day + ', "%Y-%m-%d")';
 
