@@ -29,6 +29,7 @@ export const getMyCalendar = async (req, res, next) => {
             } else {
                 result[DAY] = new Array();
                 result[DAY].push(promise);
+                result[DAY].push(promise.promise_day.DAY);
             }
         }
         
