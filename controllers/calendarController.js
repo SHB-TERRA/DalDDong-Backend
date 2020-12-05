@@ -132,7 +132,7 @@ export const addPromise = async (req, res) => {
 
             let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
                 'SELECT B.promise_day, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
-                'ON A.user_id = D.user_id WHERE A.user_id = $user_val AND D.promise_time = "' + req.body.promise_day + '"';
+                'ON A.user_id = D.user_id WHERE A.user_id = $user_val AND D.promise_day = "' + req.body.promise_day + '"';
             
             var result = await sequelize.query(
                 QUERY,
