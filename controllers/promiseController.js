@@ -130,12 +130,18 @@ export const joinPromise = async (req, res) => {
             }
         });
 
-        var now = moment().format("YYYY-MM-DD HH:mm:ss").toString();
-        
+        //var now = moment().format("YYYY-MM-DD HH:mm:ss").toString();
+        var now = moment();
+
         var LIMIT_TIME = 30;
         var DIFF_TIME = moment.utc(moment(promise.promise_day + " " + promise.promise_time, "YYYY-MM-DD HH:mm:ss").diff(moment(now, "YYYY-MM-DD HH:mm:ss"))).format("mm");
         console.log("##1  " + moment(promise.promise_day + ' ' + promise.promise_time, "YYYY-MM-DD HH:mm:ss"));
         console.log("##2  " + moment(now, "YYYY-MM-DD HH:mm:ss"));
+
+        var PROMISE_DAY = moment(promise.promise_day + ' ' + promise.promise_time, 'YYYY-MM-DD HH:mm:ss');
+        var DIFF_DAY = moment.duration(now.diff(PROMISE_DAY)).asDaus();
+        console.log("일차이:", DIFF_DAY);
+
 
         if (DIFF_TIME < LIMIT_TIME) {
             return res.status(403).send({ message: '이미 약속참가 시간이 지났습니다.' });
