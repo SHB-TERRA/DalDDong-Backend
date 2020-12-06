@@ -6,6 +6,6 @@ const calendarRouter = express.Router();
 
 calendarRouter.get(routes.userDetail(), getMyCalendar);
 calendarRouter.post(routes.userDetail(), addPromise);
-calendarRouter.delete(routes.promiseDetail(), deleteMyPromise);
+calendarRouter.delete(routes.promiseDetail(),deleteMyPromise);
 
 export default calendarRouter;

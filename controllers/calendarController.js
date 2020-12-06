@@ -8,6 +8,7 @@ export const getMyCalendar = async (req, res, next) => {
     let promiseArrs = '';
     let result = {};
     try {
+	console.log(req.session);
         let MONTH = req.query.month;
         let START_DAY = moment(MONTH, 'YYYY-MM').startOf('month').format("YYYY-MM-D").toString();
         let END_DAY = moment(MONTH, 'YYYY-MM').endOf('month').format("YYYY-MM-D").toString()
