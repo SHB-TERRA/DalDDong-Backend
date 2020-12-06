@@ -11,7 +11,6 @@ export const localsMiddleware = (req, res, next) => {
 // 로그인되어 세션에 유저정보가 있다면 req.isAuthenticated() 결과값 true
 export const isLogin = (req, res, next) => {
     if (req.isAuthenticated()) {
-        req.userInfo = req.session.passport.user;
         next();
     } else {
         return res.status(403).json({message: '로그인이 필요합니다.'});

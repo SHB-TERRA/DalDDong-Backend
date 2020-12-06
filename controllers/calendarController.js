@@ -12,6 +12,10 @@ export const getMyCalendar = async (req, res, next) => {
         let START_DAY = moment(MONTH, 'YYYY-MM').startOf('month').format("YYYY-MM-D").toString();
         let END_DAY = moment(MONTH, 'YYYY-MM').endOf('month').format("YYYY-MM-D").toString()
         
+        if ( req.params.id != req.user.id ) {
+            return res.status(403).json({message: "잘못된 접근입니다"});
+        }
+
         const QUERY = "SELECT A.user_id, C.name, D.name AS title, D.id AS promise_id, D.promise_day AS promise_day, D.promise_time AS time,  D.place, D.meeting_place, D.max_people "
         + "FROM participants A "
         + "JOIN (SELECT participants.promise_id FROM participants JOIN users ON participants.user_id=users.user_id where users.id = " + req.params.id + ") "
@@ -23,13 +27,12 @@ export const getMyCalendar = async (req, res, next) => {
         promiseArrs = await sequelize.query(QUERY, { type: QueryTypes.SELECT });
         
         for (var promise of promiseArrs) {
-            var DAY = promise.promise_day;
+            var DAY = moment(promise.promise_day).format('DD');
             if ( result[DAY] ) {
                 result[DAY].push(promise);
             } else {
                 result[DAY] = new Array();
                 result[DAY].push(promise);
-		result[DAY].push(moment(promise.promise_day).format('DD'));
             }
         }
         
@@ -42,11 +45,16 @@ export const getMyCalendar = async (req, res, next) => {
 
 export const deleteMyPromise = async (req, res )=> {
     try{
+
+        if ( req.params.id != req.user.id ) {
+            return res.status(403).json({message: "잘못된 접근입니다"});
+        }
+
         //TODO 참가자가 다 사라진 Promise 삭제해야하나
         var result = await Participant.destroy({
             where:{
-                user_id: req.body.user_id,
-                promise_id: req.body.promise_id
+                user_id: req.user.user_id,
+                promise_id: req.query.promise_id
             }
         });
 
@@ -63,6 +71,10 @@ export const deleteMyPromise = async (req, res )=> {
 export const editMyPromise = async ( req, res, next ) => {    
 
     try{
+        if ( req.params.id != req.user.id ) {
+            return res.status(403).json({message: "잘못된 접근입니다"});
+        }
+
         var QUERY = "SELECT * FROM promises A JOIN participants B ON A.id = B.promise_id WHERE promise_id = " + req.body.promise_id;
 
         var promise = await sequelize.query(
@@ -86,19 +98,22 @@ export const addPromise = async (req, res) => {
     let falseResults = new Array();
 
     try{
+        
+        if ( req.params.id != req.user.id ) {
+            return res.status(403).json({message: "잘못된 접근입니다"});
+        }
+
         // participants는 행번 array { participants: []} 이름(행번)
         let participants = req.body.participants; 
         participants.push(req.body.user_id);
         
         let max_people = participants.length;
         var time = req.body.promise_day + ' ' + req.body.promise_time + ":00"
-        var parsedTime = moment(time, 'YYYY-MM-D HH:mm:ss');
         
         newPromise = await Promise.create({
             meeting_place: req.body.meeting_place,
             place: req.body.place,
             max_people: req.body.max_people || max_people,
-            //promise_time: parsedTime,
             promise_day: req.body.promise_day,
             promise_time: req.body.promise_time,
             name: req.body.title || (req.body.promise_day+ ' ' + req.body.username),
@@ -125,11 +140,6 @@ export const addPromise = async (req, res) => {
         
         for (var user of userLists) {
             //당일 약속이 있는 참가자들 확인 
-          
-            /*let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
-                        'SELECT B.promise_time, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
-                        'ON A.user_id = D.user_id WHERE A.user_id = $user_val AND DATE_FORMAT(D.promise_time, "%Y-%m-%d") = "' + req.body.promise_day+'"'; */
-
             let QUERY = 'SELECT A.user_id FROM users A JOIN ( ' +
                 'SELECT B.promise_day, C.user_id FROM participants C INNER JOIN promises B ON B.id = C.promise_id ) D ' +
                 'ON A.user_id = D.user_id WHERE A.user_id = $user_val AND D.promise_day = "' + req.body.promise_day + '"';
