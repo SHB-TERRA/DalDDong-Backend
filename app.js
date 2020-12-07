@@ -17,7 +17,7 @@ import flash from "express-flash";
 import cors from "cors";
 
 const corsOptions = {
-    origin: "http://127.0.0.1:2230",
+	origin: process.env.HOST_URL,
     credentials: true
 };
 
@@ -57,7 +57,7 @@ app.use(passport.session());
 app.use(localsMiddleware);
 // app.use(isLogin);
 // app.use(isLogOut);
-
+//app.use(cors(corsOptions));
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
 app.use(routes.promises, promiseRouter); 
