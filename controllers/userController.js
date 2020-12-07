@@ -14,7 +14,11 @@ export const home = (req, res) => {
 export const join = async (req, res, next) => {
     let newUser = '';
     try{
-        const user = await User.findOne({ 
+        var SHINHAN = "@shinhan.com"
+        if ( !req.body.email.includes(SHINHAN) ) 
+            return res.status(403).send({'message':'신한 웹 메일을 통해서만 가입이 가능합니다'});
+        
+            const user = await User.findOne({ 
             where: {email: req.body.email}
         });
 
@@ -144,9 +148,11 @@ export const login = async (req, res, next) => {
         req.logIn(user, function(err) {
             if (err) return next(err);
             user = req.user;
-	    console.log(req);
-	    console.log(req.session);
-            return res.status(200).json(user);
+            console.log(req);
+            console.log(req.session);
+            return new Promise((resolve, reject) => {
+                res.status(200).json(user);
+            });
         });
 
     })(req, res, next);
