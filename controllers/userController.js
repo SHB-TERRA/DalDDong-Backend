@@ -31,8 +31,8 @@ export const join = async (req, res, next) => {
                 name: req.body.name,
                 email: req.body.email,
                 user_id: req.body.user_id,
-                //password: crypto.createHash('sha512').update(req.body.password).digest('base64'),
-                password: req.body.password,
+                password: crypto.createHash('sha512').update(req.body.password).digest('base64'),
+                //password: req.body.password,
                 key_for_verify
             });
         };
@@ -87,8 +87,8 @@ export const authEmail = async(req, res, next) => {
         user = await User.findOne({ 
             where: {
                 email: req.body.email,
-               // password: crypto.createHash('sha512').update(req.body.password).digest('base64')
-               password:req.body.password
+                password: crypto.createHash('sha512').update(req.body.password).digest('base64')
+               //password:req.body.password
             }
         });
         
@@ -96,8 +96,8 @@ export const authEmail = async(req, res, next) => {
             user = await User.update({ email_verified: true }, {
                 where: {
                     email: req.body.email,
-                    // password: crypto.createHash('sha512').update(req.body.password).digest('base64')
-                    password:req.body.password
+                     password: crypto.createHash('sha512').update(req.body.password).digest('base64')
+                    //password:req.body.password
                 }
               });
         }else{
@@ -116,8 +116,8 @@ export const LoginCallback = async( email, password, done ) => {
         const user = await User.findOne({ 
             where: {
                 email,
-                // password: crypto.createHash('sha512').update(password).digest('base64')}
-                password
+                 password: crypto.createHash('sha512').update(password).digest('base64')
+                //password
             }
         });
 
